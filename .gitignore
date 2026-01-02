@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+.env
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.nox/
+.tox/
+
+# Local configuration (IMPORTANT: Prevents leaking API Key)
+meteo_settings.json
+
+# Local Databases (State)
+*.db
+*.sqlite3
+
+# Logs
+*.log
+crash.log
+
+# Generated Reports & Output
+REPORT_OUTPUT/
+*.pdf
+*.csv
+*.xlsx
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS specific
+Thumbs.db
+desktop.ini

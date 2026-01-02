@@ -1,0 +1,6 @@
+requests
+reportlab
+matplotlib
+pytest
+pytest-cov
+pytest-mock
