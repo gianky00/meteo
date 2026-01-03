@@ -168,9 +168,9 @@ class PDFReporter:
         doc = SimpleDocTemplate(fname, pagesize=A4); elems = []; styles = getSampleStyleSheet()
         elems.append(Paragraph(f"DIARIO METEO CANTIERE - {city}", styles['Title']))
         elems.append(Paragraph(f"Timeline completa (Rilevazioni + Previsioni)", styles['Normal']))
-        rows = [['Ora', 'Tipo', 'Meteo', 'T°C', 'Vento']]
+        rows = [['Data/Ora', 'Tipo', 'Meteo', 'T°C', 'Vento']]
         for i in summary['timeline']:
-            dt = datetime.datetime.fromtimestamp(i['dt']).strftime('%H:%M')
+            dt = datetime.datetime.fromtimestamp(i['dt']).strftime('%d/%m/%Y %H:%M')
             rows.append([dt, i['type'], i['desc'], f"{i['temp']:.1f}", f"{i['wind']:.0f}"])
         t = Table(rows); t.setStyle(TableStyle([('GRID',(0,0),(-1,-1),0.5,colors.grey),('BACKGROUND',(0,0),(-1,0),colors.navy),('TEXTCOLOR',(0,0),(-1,0),colors.white)]))
         elems.append(t); doc.build(elems); return fname
@@ -227,9 +227,9 @@ class MeteoApp:
         for i in r['timeline']:
             dt = datetime.datetime.fromtimestamp(i['dt'])
             tag = "PAST" if i['type']=='RILEVATO' else "FUTURE"
-            if dt.hour == datetime.datetime.now().hour: tag = "NOW"
+            if dt.hour == datetime.datetime.now().hour and dt.date() == datetime.date.today(): tag = "NOW"
             prefix = "●" if i['type']=='RILEVATO' else "○"
-            self.log.insert(tk.END, f"{prefix} {dt.strftime('%H:%M')} [{i['type']}] {i['temp']:.1f}°C - {i['desc']}\n", tag)
+            self.log.insert(tk.END, f"{prefix} {dt.strftime('%d/%m/%Y %H:%M')} [{i['type']}] {i['temp']:.1f}°C - {i['desc']}\n", tag)
         self.log.config(state='disabled')
 
         # Chart configuration
@@ -250,8 +250,11 @@ class MeteoApp:
 
         # Titoli e Coordinate (X e Y)
         self.ax.set_title("DIARIO TERMICO CANTIERE (24h)", fontsize=12, fontweight='bold', pad=15)
-        self.ax.set_xlabel("Orario del Rilevamento / Previsione", fontsize=10, labelpad=10)
+        self.ax.set_xlabel("Data e Ora del Rilevamento", fontsize=10, labelpad=10)
         self.ax.set_ylabel("Temperatura misurata in °C", fontsize=10, labelpad=10)
+        
+        # Formattatore asse X per GG/MM/AAAA HH:MM
+        self.ax.xaxis.set_major_formatter(mdates.DateFormatter('%d/%m/%Y\n%H:%M'))
         
         self.ax.legend(loc='upper right', fontsize=9)
         self.ax.grid(True, linestyle=':', alpha=0.6)
